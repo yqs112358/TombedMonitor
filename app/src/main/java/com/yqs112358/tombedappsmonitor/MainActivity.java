@@ -2,37 +2,34 @@ package com.yqs112358.tombedappsmonitor;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.yqs112358.tombedappsmonitor.utils.PackageUtils;
-import com.yqs112358.tombedappsmonitor.services.ShizukuService;
+import com.topjohnwu.superuser.Shell;
 
-import rikka.shizuku.Shizuku;
+import com.yqs112358.tombedappsmonitor.utils.PackageUtils;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        // require shizuku
-        Shizuku.addRequestPermissionResultListener(this::onRequestPermissionsResult);
-        try {
-            ShizukuService.requestPermission();
+        // Check root access
+        boolean rootAccess = Shell.getShell().isRoot();
+        if (!rootAccess) {
+            this.alertNoRootPermissionAndExit();
         }
-        catch(Throwable e) {
-            e.printStackTrace();
-        }
+
+        // Set layout
+        setContentView(R.layout.activity_main);
 
         // read all packages list
         PackageUtils.saveAllInstalledPackages();
-
-        // bind remote user service
-        ShizukuService.startRemoteUserService();
     }
 
     @Override
@@ -48,15 +45,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        Shizuku.removeRequestPermissionResultListener(this::onRequestPermissionsResult);
     }
 
-    private void onRequestPermissionsResult(int requestCode, int grantResult) {
-        if (grantResult == PERMISSION_GRANTED) {
-            Log.i("TombedMonitor", "shizuku permission granted");
-        } else {
-            Log.e("TombedMonitor", "Fail to grant shizuku permission");
-        }
+    private void alertNoRootPermissionAndExit() {
+        new AlertDialog.Builder(this)
+            .setTitle(R.string.no_root_dialog_title)
+            .setMessage(R.string.no_root_dialog_content)
+            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    finishAffinity(); // exit
+                }
+            })
+            .show();
     }
 }

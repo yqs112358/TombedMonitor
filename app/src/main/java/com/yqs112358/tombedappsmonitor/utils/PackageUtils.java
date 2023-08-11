@@ -4,21 +4,31 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PackageUtils {
-    private static List<PackageInfo> packageInfos = new ArrayList<PackageInfo>();
+    private static Map<String, PackageInfo> packageInfos = new HashMap<String, PackageInfo>();
 
     public static void saveAllInstalledPackages() {
         try {
             Context context = ApplicationUtils.getContext();
-            packageInfos = context.getPackageManager().getInstalledPackages(0);
+            List<PackageInfo> infos = context.getPackageManager().getInstalledPackages(0);
+            for(PackageInfo info : infos)
+            {
+                packageInfos.put(info.packageName, info);
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
     }
 
-    public static List<PackageInfo> getPackageInfos() {
+    public static Map<String, PackageInfo> getAllPackagesInfo() {
         return packageInfos;
+    }
+
+    public static PackageInfo getPackageInfo(String packageName) {
+        return packageInfos.get(packageName);
     }
 }
