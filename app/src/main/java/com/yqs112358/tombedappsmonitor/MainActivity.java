@@ -8,6 +8,7 @@ import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.yqs112358.tombedappsmonitor.utils.ApplicationUtils;
 import com.yqs112358.tombedappsmonitor.utils.PackageUtils;
 import com.yqs112358.tombedappsmonitor.utils.ShizukuUtils;
 

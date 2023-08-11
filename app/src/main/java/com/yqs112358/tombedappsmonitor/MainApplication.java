@@ -21,17 +21,14 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        ApplicationUtils.setApplication(this);
+        ApplicationUtils.setContext(getApplicationContext());
+
         // require sui
         isSui = Sui.init(getPackageName());
         if (!isSui) {
             // If this is a multi-process application
             //ShizukuProvider.enableMultiProcessSupport( /* is current process the same process of ShizukuProvider's */ );
         }
-    }
-
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        ApplicationUtils.setApplication(this);
     }
 }
