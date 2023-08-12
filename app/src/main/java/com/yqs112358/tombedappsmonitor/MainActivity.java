@@ -2,6 +2,7 @@ package com.yqs112358.tombedappsmonitor;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private AppListItemAdapter appListItemAdapter = null;
     private String searchFilter = "";
     private boolean isAppRunning = false;
-    private int refreshInterval = 2000;
+    private int refreshInterval = 500;
 
     // app list refresher
     private final Handler handler = new Handler();
@@ -97,9 +98,40 @@ public class MainActivity extends AppCompatActivity {
     public void refreshAppList() {
         try {
             // List<AppItem> filter = PackageUtils.filter(this, type, text);
+
+            List<ProcessAndAppInfo> newAppItemList = ProcessUtils.getAllProcessesInfo();
+
+            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+                @Override
+                public int getOldListSize() {
+                    return appItemList.size();
+                }
+
+                @Override
+                public int getNewListSize() {
+                    return newAppItemList.size();
+                }
+
+                @Override
+                public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                    // 判断两项是否是同一项
+                    return appItemList.get(oldItemPosition).getProcessName().equals(newAppItemList.get(newItemPosition).getProcessName());
+                }
+
+                @Override
+                public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                    // 判断两项的内容是否相同
+                    ProcessAndAppInfo oldItem = appItemList.get(oldItemPosition);
+                    ProcessAndAppInfo newItem = newAppItemList.get(newItemPosition);
+                    return oldItem.getStatus().equals(newItem.getStatus())
+                            && oldItem.getFrozenType().equals(newItem.getFrozenType());
+                }
+            });
+
             appItemList.clear();
-            appItemList.addAll(ProcessUtils.getAllProcessesInfo());
-            appListItemAdapter.notifyDataSetChanged();
+            appItemList.addAll(newAppItemList);
+
+            diffResult.dispatchUpdatesTo(appListItemAdapter);
         }
         catch(Throwable t)
         {
