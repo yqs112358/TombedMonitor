@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -16,19 +18,31 @@ import com.topjohnwu.superuser.Shell;
 
 import com.yqs112358.tombedappsmonitor.adapter.AppListItemAdapter;
 import com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo;
-import com.yqs112358.tombedappsmonitor.tasks.AppListUpdateTask;
 import com.yqs112358.tombedappsmonitor.utils.AppPackageUtils;
+import com.yqs112358.tombedappsmonitor.utils.ProcessUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 
 public class MainActivity extends AppCompatActivity {
 
-    private List<ProcessAndAppInfo> appItemList = null;
+    private List<ProcessAndAppInfo> appItemList = new ArrayList<ProcessAndAppInfo>();
     private AppListItemAdapter appListItemAdapter = null;
-    private Timer appListUpdateTimer = null;
     private String searchFilter = "";
-    private int refreshInterval = 1000;
+    private boolean isAppRunning = false;
+    private int refreshInterval = 500;
+
+    // app list refresher
+    private final Handler handler = new Handler();
+    Runnable appListRefreshRunner = new Runnable(){
+        @Override
+        public void run() {
+            refreshAppList();
+            if(isAppRunning)
+                handler.postDelayed(this, refreshInterval);
+        }
+    };
 
 
     @Override
@@ -55,25 +69,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        try {
-            if(appListUpdateTimer != null)
-                appListUpdateTimer.cancel();
-            appListUpdateTimer = new Timer();
-            appListUpdateTimer.schedule(
-                    new AppListUpdateTask(appItemList, appListItemAdapter), 0, refreshInterval);
-        }
-        catch(Throwable t){
-            t.printStackTrace();
-        }
+        isAppRunning = true;
+        handler.postDelayed(appListRefreshRunner, 0);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        appListUpdateTimer.cancel();
-        appListUpdateTimer = null;
+        isAppRunning = false;
+        handler.removeCallbacks(appListRefreshRunner);
     }
 
     @Override
@@ -91,6 +95,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             })
             .show();
+    }
+
+    public void refreshAppList() {
+        try {
+            // List<AppItem> filter = PackageUtils.filter(this, type, text);
+            appItemList.clear();
+            appItemList.addAll(ProcessUtils.getAllProcessesInfo());
+            appListItemAdapter.notifyDataSetChanged();
+        }
+        catch(Throwable t)
+        {
+            t.printStackTrace();
+        }
     }
 
     private void initUI() {

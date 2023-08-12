@@ -47,9 +47,9 @@ public class AppListItemAdapter extends ArrayAdapter<ProcessAndAppInfo> {
         boolean isApp = appInfo.getIsApp();
         appNameText.setText(isApp ? appInfo.getAppName() : appInfo.getProcessName());
 
-        // set packageName
-        TextView packageNameText = convertView.findViewById(R.id.packageName);
-        packageNameText.setText(isApp ? appInfo.getPackageName() : "Android");
+        // set processName
+        TextView processNameText = convertView.findViewById(R.id.processName);
+        processNameText.setText(appInfo.getProcessName());
 
         // set app status
         TextView statusText = convertView.findViewById(R.id.appStatus);
