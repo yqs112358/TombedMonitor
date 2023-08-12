@@ -10,11 +10,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProcessAndAppInfo {
+
     public enum FrozenType {
-        None, FreezerV1, FreezerV2, SIGSTOP, SIGTSTP, IncompleteV2
+        None, FreezerV1, FreezerV2, SIGSTOP, SIGTSTP, MaybeV2
     }
     public enum Status {
-        Unknown, Sleeping, Running, D, Idle
+        Unknown, Sleeping, Running, DiskSleep, Idle, Stopped, Tracked, Zombie, Died
     }
 
     String processName;

@@ -24,7 +24,11 @@ public class ProcessUtils {
         put("S", ProcessAndAppInfo.Status.Sleeping);
         put("R", ProcessAndAppInfo.Status.Running);
         put("I", ProcessAndAppInfo.Status.Idle);
-        put("D", ProcessAndAppInfo.Status.D);
+        put("D", ProcessAndAppInfo.Status.DiskSleep);
+        put("Z", ProcessAndAppInfo.Status.Zombie);
+        put("T", ProcessAndAppInfo.Status.Stopped);
+        put("t", ProcessAndAppInfo.Status.Tracked);
+        put("X", ProcessAndAppInfo.Status.Died);
     }};
 
     // process frozen type map
@@ -34,7 +38,7 @@ public class ProcessUtils {
         put("__refrigerator", ProcessAndAppInfo.FrozenType.FreezerV1);
         put("do_freezer_trap", ProcessAndAppInfo.FrozenType.FreezerV2);
         put("do_signal_stop", ProcessAndAppInfo.FrozenType.SIGSTOP);
-        put("get_signal", ProcessAndAppInfo.FrozenType.IncompleteV2);
+        put("get_signal", ProcessAndAppInfo.FrozenType.MaybeV2);
     }};
 
 
@@ -73,7 +77,8 @@ public class ProcessUtils {
 
             // process other data
             res.setUser(datas[0]);
-            res.setStatus(processStatusMap.getOrDefault(datas[7], ProcessAndAppInfo.Status.Unknown));
+            String basicStaticChar = datas[7].substring(0,1);
+            res.setStatus(processStatusMap.getOrDefault(basicStaticChar, ProcessAndAppInfo.Status.Unknown));
             res.setFrozenType(processFrozenTypeMap.getOrDefault(datas[5], ProcessAndAppInfo.FrozenType.None));
 
             resMap.put(processName, res);
