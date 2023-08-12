@@ -3,4 +3,9 @@
     <string name="no_root_dialog_title">Permission denied</string>
     <string name="no_root_dialog_content">No root access granted. TombMonitor must need root to work.</string>
     <string name="search_placeholder">Search...</string>
+    <string name="freeze_status_V2">❄️FreezerV2冻结中</string>
+    <string name="freeze_status_V1">❄️FreezerV1冻结中</string>
+    <string name="freeze_status_maybeV2">❄️V2冻结中（？）</string>
+    <string name="freeze_status_SIGSTOP">🧊SIGSTOP冻结中</string>
+    <string name="freeze_status_unknown">未知状态</string>
 </resources>

@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -15,7 +14,7 @@ import android.widget.ListView;
 
 import com.topjohnwu.superuser.Shell;
 
-import com.yqs112358.tombedappsmonitor.adapter.AppItemAdapter;
+import com.yqs112358.tombedappsmonitor.adapter.AppListItemAdapter;
 import com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo;
 import com.yqs112358.tombedappsmonitor.tasks.AppListUpdateTask;
 import com.yqs112358.tombedappsmonitor.utils.AppPackageUtils;
@@ -26,10 +25,10 @@ import java.util.Timer;
 public class MainActivity extends AppCompatActivity {
 
     private List<ProcessAndAppInfo> appItemList = null;
-    private AppItemAdapter appItemAdapter = null;
-    private Handler handler = new Handler();
+    private AppListItemAdapter appListItemAdapter = null;
     private Timer appListUpdateTimer = null;
     private String searchFilter = "";
+    private int refreshInterval = 1000;
 
 
     @Override
@@ -61,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
             if(appListUpdateTimer != null)
                 appListUpdateTimer.cancel();
             appListUpdateTimer = new Timer();
-            appListUpdateTimer.schedule(new AppListUpdateTask(), 0, 1000);
+            appListUpdateTimer.schedule(
+                    new AppListUpdateTask(appItemList, appListItemAdapter), 0, refreshInterval);
         }
         catch(Throwable t){
             t.printStackTrace();
@@ -93,14 +93,6 @@ public class MainActivity extends AppCompatActivity {
             .show();
     }
 
-    public void refreshAppList() {
-        handler.post(() -> {
-            synchronized (appItemList) {
-                appItemAdapter.notifyDataSetChanged();
-            }
-        });
-    }
-
     private void initUI() {
         // init search bar
         EditText editText = findViewById(R.id.searchBar);
@@ -119,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
 
         // init app list
         ListView listView = findViewById(R.id.appList);
-        appItemAdapter = new AppItemAdapter(MainActivity.this, R.layout.app_item, appItemList);
-        listView.setAdapter(appItemAdapter);
+        appListItemAdapter = new AppListItemAdapter(MainActivity.this, R.layout.app_item, appItemList);
+        listView.setAdapter(appListItemAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {}

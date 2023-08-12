@@ -3,6 +3,7 @@ package com.yqs112358.tombedappsmonitor.utils;
 import com.topjohnwu.superuser.Shell;
 import com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -43,13 +44,13 @@ public class ProcessUtils {
 
 
     // Map<processName, info>
-    public static Map<String, ProcessAndAppInfo> getAllProcessesInfo() throws Throwable {
+    public static List<ProcessAndAppInfo> getAllProcessesInfo() throws Throwable {
         // Execute commands synchronously
         Shell.Result result = Shell.cmd(queryCommand).exec();
         if (!result.isSuccess())
-            return new HashMap<String, ProcessAndAppInfo>();
+            return new ArrayList<ProcessAndAppInfo>();
 
-        Map<String, ProcessAndAppInfo> resMap = new HashMap<String, ProcessAndAppInfo>();
+        List<ProcessAndAppInfo> resList = new ArrayList<ProcessAndAppInfo>();
         List<String> out = result.getOut();  // stdout
         for (String line : out) {
             String[] datas = line.split("\\s+");
@@ -81,8 +82,8 @@ public class ProcessUtils {
             res.setStatus(processStatusMap.getOrDefault(basicStaticChar, ProcessAndAppInfo.Status.Unknown));
             res.setFrozenType(processFrozenTypeMap.getOrDefault(datas[5], ProcessAndAppInfo.FrozenType.None));
 
-            resMap.put(processName, res);
+            resList.add(res);
         }
-        return resMap;
+        return resList;
     }
 }
