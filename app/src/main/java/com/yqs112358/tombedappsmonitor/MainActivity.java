@@ -10,12 +10,16 @@ import android.util.Log;
 import com.topjohnwu.superuser.Shell;
 
 import com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo;
+import com.yqs112358.tombedappsmonitor.tasks.AppListUpdateTask;
 import com.yqs112358.tombedappsmonitor.utils.ProcessUtils;
 import com.yqs112358.tombedappsmonitor.utils.AppPackageUtils;
 
 import java.util.Map;
+import java.util.Timer;
 
 public class MainActivity extends AppCompatActivity {
+
+    private Timer appListUpdateTimer = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         // Check root access
         boolean rootAccess = Shell.getShell().isRoot();
         if (!rootAccess) {
+            //TODO
             this.alertNoRootPermissionAndExit();
         }
 
@@ -39,10 +44,10 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         try {
-            Map<String, ProcessAndAppInfo> res = ProcessUtils.getAllProcessesInfo();
-            Log.i("TombedMonitor", "=====================================");
-            Log.i("TombedMonitor", res.toString());
-            Log.i("TombedMonitor", "=====================================");
+            if(appListUpdateTimer != null)
+                appListUpdateTimer.cancel();
+            appListUpdateTimer = new Timer();
+            appListUpdateTimer.schedule(new AppListUpdateTask(), 0, 1000);
         }
         catch(Throwable t){
             t.printStackTrace();
@@ -52,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+        appListUpdateTimer.cancel();
+        appListUpdateTimer = null;
     }
 
     @Override

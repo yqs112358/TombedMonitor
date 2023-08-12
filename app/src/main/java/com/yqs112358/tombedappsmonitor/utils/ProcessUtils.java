@@ -43,7 +43,7 @@ public class ProcessUtils {
         // Execute commands synchronously
         Shell.Result result = Shell.cmd(queryCommand).exec();
         if (!result.isSuccess())
-            return null;
+            return new HashMap<String, ProcessAndAppInfo>();
 
         Map<String, ProcessAndAppInfo> resMap = new HashMap<String, ProcessAndAppInfo>();
         List<String> out = result.getOut();  // stdout
