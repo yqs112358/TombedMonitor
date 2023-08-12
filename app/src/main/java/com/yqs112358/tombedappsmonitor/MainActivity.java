@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -50,8 +51,7 @@ public class MainActivity extends AppCompatActivity {
         // Check root access
         boolean rootAccess = Shell.getShell().isRoot();
         if (!rootAccess) {
-            //TODO
-            this.alertNoRootPermissionAndExit();
+            this.alertNoRootPermission();
         }
 
         // Set layout
@@ -78,23 +78,55 @@ public class MainActivity extends AppCompatActivity {
         handler.removeCallbacks(appListRefreshRunner);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 
-    private void alertNoRootPermissionAndExit() {
-        new AlertDialog.Builder(this)
+    // alert no root permission and check again later
+    private void alertNoRootPermission() {
+        AlertDialog dialog = new AlertDialog.Builder(this)
             .setTitle(R.string.no_root_dialog_title)
             .setMessage(R.string.no_root_dialog_content)
+            .setCancelable(false)
             .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    finishAffinity(); // exit
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            boolean rootAccess = Shell.getShell().isRoot();
+                            if (!rootAccess) {
+                                alertNoRootPermission();
+                            }
+                        }
+                    }, 2000);
                 }
-            })
-            .show();
+            }).create();
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
     }
 
+    // init all ui
+    private void initUI() {
+        // init search bar
+        EditText editText = findViewById(R.id.searchBar);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                searchFilter = s.toString();
+            }
+        });
+
+        // init app list
+        appListItemAdapter = new AppListItemAdapter(this, appItemList);
+        RecyclerView rv = findViewById(R.id.appList);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        rv.setAdapter(appListItemAdapter);
+    }
+
+    // refresh app list
     public void refreshAppList() {
         try {
             List<ProcessAndAppInfo> newAppItemList = ProcessUtils.getAllProcessesInfo();
@@ -143,28 +175,5 @@ public class MainActivity extends AppCompatActivity {
         {
             t.printStackTrace();
         }
-    }
-
-    private void initUI() {
-        // init search bar
-        EditText editText = findViewById(R.id.searchBar);
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                searchFilter = s.toString();
-            }
-        });
-
-        // init app list
-        appListItemAdapter = new AppListItemAdapter(this, appItemList);
-        RecyclerView rv = findViewById(R.id.appList);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(appListItemAdapter);
     }
 }
