@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingHorizontal="28dp"
@@ -20,7 +22,8 @@
         android:layout_marginStart="20dp"
         android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -33,22 +36,27 @@
                 android:text="@string/app_name"
                 android:textColor="?attr/colorSecondary"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/appStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="5dp"
                 android:gravity="end"
                 android:paddingHorizontal="6dp"
                 android:paddingVertical="3dp"
-                android:text="Unknown"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+                android:text="❄️FreezerV1冻结中"
+                android:textColor="#64b5f6"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <TextView
@@ -57,6 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:gravity="start"
-            android:text="@string/app_name" />
+            android:text="@string/app_name"
+            android:textColor="@color/deeper_gray" />
     </LinearLayout>
 </LinearLayout>

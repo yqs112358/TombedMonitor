@@ -11,4 +11,5 @@
     <color name="black_100">#FFF5F5F5</color>
     <color name="white_100">#FF1F1F1F</color>
     <color name="gray">#c1c1c2</color>
+    <color name="deeper_gray">#9e9e9e</color>
 </resources>
