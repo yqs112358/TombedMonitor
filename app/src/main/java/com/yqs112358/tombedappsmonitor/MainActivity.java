@@ -1,7 +1,5 @@
 package com.yqs112358.tombedappsmonitor;
 
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,7 +9,11 @@ import android.util.Log;
 
 import com.topjohnwu.superuser.Shell;
 
-import com.yqs112358.tombedappsmonitor.utils.PackageUtils;
+import com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo;
+import com.yqs112358.tombedappsmonitor.utils.ProcessUtils;
+import com.yqs112358.tombedappsmonitor.utils.AppPackageUtils;
+
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,12 +31,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // read all packages list
-        PackageUtils.saveAllInstalledPackages();
+        AppPackageUtils.saveAllInstalledPackages();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        try {
+            Map<String, ProcessAndAppInfo> res = ProcessUtils.getAllProcessesInfo();
+            Log.i("TombedMonitor", "=====================================");
+            Log.i("TombedMonitor", res.toString());
+            Log.i("TombedMonitor", "=====================================");
+        }
+        catch(Throwable t){
+            t.printStackTrace();
+        }
     }
 
     @Override
