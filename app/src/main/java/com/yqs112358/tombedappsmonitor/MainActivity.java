@@ -97,10 +97,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void refreshAppList() {
         try {
-            // List<AppItem> filter = PackageUtils.filter(this, type, text);
-
             List<ProcessAndAppInfo> newAppItemList = ProcessUtils.getAllProcessesInfo();
+            if(!searchFilter.isEmpty())
+            {
+                // Filter list
+                newAppItemList.removeIf(item->{
+                   return !item.getAppName().contains(searchFilter) && !item.getProcessName().contains(searchFilter);
+                });
+            }
 
+            // Calc diff and update recycleview
             DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
                 @Override
                 public int getOldListSize() {
