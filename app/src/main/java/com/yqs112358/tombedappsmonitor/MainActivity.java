@@ -2,17 +2,15 @@ package com.yqs112358.tombedappsmonitor;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import com.topjohnwu.superuser.Shell;
 
@@ -23,7 +21,6 @@ import com.yqs112358.tombedappsmonitor.utils.ProcessUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private AppListItemAdapter appListItemAdapter = null;
     private String searchFilter = "";
     private boolean isAppRunning = false;
-    private int refreshInterval = 500;
+    private int refreshInterval = 2000;
 
     // app list refresher
     private final Handler handler = new Handler();
@@ -127,12 +124,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // init app list
-        ListView listView = findViewById(R.id.appList);
-        appListItemAdapter = new AppListItemAdapter(MainActivity.this, R.layout.app_item, appItemList);
-        listView.setAdapter(appListItemAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {}
-        });
+        appListItemAdapter = new AppListItemAdapter(this, appItemList);
+        RecyclerView rv = findViewById(R.id.appList);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        rv.setAdapter(appListItemAdapter);
     }
 }

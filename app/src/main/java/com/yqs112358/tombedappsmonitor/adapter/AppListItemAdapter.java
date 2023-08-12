@@ -10,70 +10,92 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.yqs112358.tombedappsmonitor.R;
 import com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo;
 
 import java.util.List;
 
-public class AppListItemAdapter extends ArrayAdapter<ProcessAndAppInfo> {
+public class AppListItemAdapter extends RecyclerView.Adapter<AppListItemAdapter.MyViewHolder>{
 
-    private final int resourceId;
+    // 内部类，绑定控件
+    class MyViewHolder extends RecyclerView.ViewHolder{
+        TextView appName;
+        TextView processName;
+        TextView appStatus;
+        ImageView appIcon;
+        public MyViewHolder(View itemView) {
+            super(itemView);
+            appName = (TextView)itemView.findViewById(R.id.appName);
+            processName = (TextView)itemView.findViewById(R.id.processName);
+            appStatus = (TextView)itemView.findViewById(R.id.appStatus);
+            appIcon = (ImageView)itemView.findViewById(R.id.appIcon);
+        }
+    }
 
-    public AppListItemAdapter(@NonNull Context context, int resource, List<ProcessAndAppInfo> objects) {
-        super(context, resource, objects);
-        this.resourceId = resource;
+    private Context context;
+    private List<ProcessAndAppInfo> dataList;
+    private View inflater;
+
+    public AppListItemAdapter(Context context, List<ProcessAndAppInfo> list){
+        this.context = context;
+        this.dataList = list;
     }
 
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        ProcessAndAppInfo appInfo = getItem(position);
-        if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
-        }
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // 创建ViewHolder，返回每一项的布局
+        inflater = LayoutInflater.from(context).inflate(R.layout.app_item, parent, false);
+        MyViewHolder myViewHolder = new MyViewHolder(inflater);
+        return myViewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(MyViewHolder holder, int position) {
+        // 更新控件数据
+        ProcessAndAppInfo appInfo = dataList.get(position);
 
         // set icon
-        ImageView appIconImage = convertView.findViewById(R.id.appIcon);
-        appIconImage.setImageDrawable(appInfo.getAppIcon());
+        holder.appIcon.setImageDrawable(appInfo.getAppIcon());
 
         // set name
-        TextView appNameText = convertView.findViewById(R.id.appName);
         boolean isApp = appInfo.getIsApp();
-        appNameText.setText(isApp ? appInfo.getAppName() : appInfo.getProcessName());
+        holder.appName.setText(isApp ? appInfo.getAppName() : appInfo.getProcessName());
 
         // set processName
-        TextView processNameText = convertView.findViewById(R.id.processName);
-        processNameText.setText(appInfo.getProcessName());
+        holder.processName.setText(appInfo.getProcessName());
 
         // set app status
-        TextView statusText = convertView.findViewById(R.id.appStatus);
         switch(appInfo.getFrozenType())
         {
             case FreezerV2:
-                statusText.setText(R.string.freeze_status_V2);
+                holder.appStatus.setText(R.string.freeze_status_V2);
                 break;
             case FreezerV1:
-                statusText.setText(R.string.freeze_status_V1);
+                holder.appStatus.setText(R.string.freeze_status_V1);
                 break;
             case SIGSTOP:
-                statusText.setText(R.string.freeze_status_SIGSTOP);
+                holder.appStatus.setText(R.string.freeze_status_SIGSTOP);
                 break;
             case MaybeV2:
-                statusText.setText(R.string.freeze_status_maybeV2);
+                holder.appStatus.setText(R.string.freeze_status_maybeV2);
                 break;
             case SIGTSTP:
-                statusText.setText(R.string.freeze_status_unknown);
+                holder.appStatus.setText(R.string.freeze_status_unknown);
                 break;
             default:
-                statusText.setText(R.string.freeze_status_unknown);
+                holder.appStatus.setText(R.string.freeze_status_unknown);
                 break;
         }
-        return convertView;
+    }
+
+    @Override
+    public int getItemCount() {
+        //返回Item总条数
+        return dataList.size();
     }
 }
