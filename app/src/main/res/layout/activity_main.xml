@@ -10,7 +10,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme"
+        android:theme="@style/MainTheme"
         app:elevation="0dp"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -21,10 +21,12 @@
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme"
-            app:theme="@style/AppTheme"
+            app:popupTheme="@style/MainTheme"
+            app:theme="@style/MainTheme"
             app:title="@string/app_name"
             app:titleTextColor="?attr/colorSecondary" />
+
+        <include layout="@layout/activity_searchbar" />
         
         <include layout="@layout/activity_app_list" />
 

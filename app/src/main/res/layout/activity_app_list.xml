@@ -6,7 +6,7 @@
     android:paddingTop="8dp">
 
     <ListView
-        android:id="@+id/app_list"
+        android:id="@+id/appList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@null"
