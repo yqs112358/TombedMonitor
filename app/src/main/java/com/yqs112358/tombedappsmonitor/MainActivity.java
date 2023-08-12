@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -104,6 +106,16 @@ public class MainActivity extends AppCompatActivity {
 
     // init all ui
     private void initUI() {
+        // init toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.main);
+        toolbar.setOnMenuItemClickListener(item -> {
+//            Intent intent = new Intent();
+//            intent.setClass(MainActivity.this, SettingActivity.class);
+//            startActivity(intent);
+            return true;
+        });
+
         // init search bar
         EditText editText = findViewById(R.id.searchBar);
         editText.addTextChangedListener(new TextWatcher() {
