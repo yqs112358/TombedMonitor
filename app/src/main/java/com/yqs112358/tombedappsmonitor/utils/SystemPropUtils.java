@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class SystemPropUtils {
 
-    public int getAndroidVersion() {
+    public static int getAndroidVersion() {
         Shell.Result result = Shell.cmd("getprop ro.build.version.release").exec();
         if (!result.isSuccess())
             return 0;
@@ -19,7 +19,7 @@ public class SystemPropUtils {
         return Integer.parseInt(out.get(0));
     }
 
-    public int getAndroidApiVersion() {
+    public static int getAndroidApiVersion() {
         Shell.Result result = Shell.cmd("getprop ro.build.version.sdk").exec();
         if (!result.isSuccess())
             return 0;
@@ -30,7 +30,7 @@ public class SystemPropUtils {
         return Integer.parseInt(out.get(0));
     }
 
-    public String getLinuxCoreVersion() {
+    public static String getLinuxCoreVersion() {
         Shell.Result result = Shell.cmd("uname -r").exec();
         if (!result.isSuccess())
             return "";

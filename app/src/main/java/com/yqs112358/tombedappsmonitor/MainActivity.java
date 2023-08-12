@@ -13,21 +13,32 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ForegroundColorSpan;
+import android.text.util.Linkify;
+import android.util.Log;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.topjohnwu.superuser.Shell;
 
 import com.yqs112358.tombedappsmonitor.adapter.AppListItemAdapter;
 import com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo;
 import com.yqs112358.tombedappsmonitor.utils.AppPackageUtils;
+import com.yqs112358.tombedappsmonitor.utils.FreezerUtils;
 import com.yqs112358.tombedappsmonitor.utils.ProcessUtils;
+import com.yqs112358.tombedappsmonitor.utils.RootUtils;
+import com.yqs112358.tombedappsmonitor.utils.SystemPropUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private TextView appCountText = null;
     private List<ProcessAndAppInfo> appItemList = new ArrayList<ProcessAndAppInfo>();
     private AppListItemAdapter appListItemAdapter = null;
     private String searchFilter = "";
@@ -51,9 +62,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Check root access
-        boolean rootAccess = Shell.getShell().isRoot();
-        if (!rootAccess) {
-            this.alertNoRootPermission();
+        if(!RootUtils.checkRootPermission())
+        {
+            Log.i("TombedMonitor", "No root perm. Try getting it...");
+            if(!RootUtils.requireRootPermission()) {
+                Log.e("TombedMonitor", "Root perm denied.");
+                this.alertNoRootPermission();
+            }
+            else
+                Log.i("TombedMonitor", "Root perm granted");
         }
 
         // Set layout
@@ -92,31 +109,67 @@ public class MainActivity extends AppCompatActivity {
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            boolean rootAccess = Shell.getShell().isRoot();
-                            if (!rootAccess) {
+                            if(!RootUtils.requireRootPermission())
                                 alertNoRootPermission();
-                            }
                         }
                     }, 2000);
+                }
+            })
+            .setNeutralButton(R.string.no_root_dialog_exit, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    finishAffinity();
                 }
             }).create();
         dialog.show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(Color.BLACK);
     }
 
     // init all ui
     private void initUI() {
         // init toolbar
+        StringBuilder message = new StringBuilder("内核墓碑支持状态：\n");
+        if(FreezerUtils.doesSupportFreezerV2Frozen())
+            message.append("✔️已挂载 FreezerV2(FROZEN)");
+        else if (FreezerUtils.doesSupportFreezerV2Uid())
+            message.append("✔️已挂载 FreezerV2(UID)");
+        else if(FreezerUtils.doesSupportFreezerV1Frozen())
+            message.append("✔️已挂载 FreezerV1(FROZEN)");
+        else
+            message.append("❓不支持Freezer，仅可用Signal-19/20方式");
+
+        message.append("\n\n安卓版本：").append(SystemPropUtils.getAndroidVersion())
+                .append("(API ").append(SystemPropUtils.getAndroidApiVersion())
+                .append(")\n内核版本：").append(SystemPropUtils.getLinuxCoreVersion())
+                .append("\n\n项目开源地址：");
+
+        // add color and link to message
+        String preMessage = message.toString();
+        SpannableString realMessage = new SpannableString(preMessage + "https://github.com/yqs112358/TombedAppsMonitor");
+        Linkify.addLinks(realMessage, Linkify.WEB_URLS);
+        ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.BLUE);
+        realMessage.setSpan(foregroundColorSpan, preMessage.length(), realMessage.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.main);
+
         toolbar.setOnMenuItemClickListener(item -> {
-//            Intent intent = new Intent();
-//            intent.setClass(MainActivity.this, SettingActivity.class);
-//            startActivity(intent);
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.about_dialog_title)
+                    .setIcon(R.mipmap.ic_launcher_round)
+                    .setMessage(realMessage)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {}
+                    }).show();
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+            TextView dialogMessage = (TextView)dialog.findViewById(android.R.id.message);
+            dialogMessage.setMovementMethod(LinkMovementMethod.getInstance());
             return true;
         });
 
         // init search bar
+        appCountText = findViewById(R.id.appCount);
         EditText editText = findViewById(R.id.searchBar);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -149,6 +202,10 @@ public class MainActivity extends AppCompatActivity {
                    return !item.getAppName().contains(searchFilter) && !item.getProcessName().contains(searchFilter);
                 });
             }
+
+            // Update count
+            appCountText.setText(new StringBuilder("共有")
+                    .append(newAppItemList.size()).append("个被冻结进程").toString());
 
             // Calc diff and update recycleview
             DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {

@@ -4,7 +4,6 @@ import static com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo.FrozenT
 import static com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo.FrozenType.FreezerV2;
 import static com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo.FrozenType.MaybeV2;
 import static com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo.FrozenType.SIGSTOP;
-import static com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo.FrozenType.SIGTSTP;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -83,9 +82,6 @@ public class AppListItemAdapter extends RecyclerView.Adapter<AppListItemAdapter.
                 break;
             case MaybeV2:
                 holder.appStatus.setText(R.string.freeze_status_maybeV2);
-                break;
-            case SIGTSTP:
-                holder.appStatus.setText(R.string.freeze_status_unknown);
                 break;
             default:
                 holder.appStatus.setText(R.string.freeze_status_unknown);
