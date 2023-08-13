@@ -41,7 +41,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private TextView appCountText = null;
-    private List<ProcessAndAppInfo> appItemList = new ArrayList<ProcessAndAppInfo>();
     private AppListItemAdapter appListItemAdapter = null;
     private String searchFilter = "";
     private boolean isAppRunning = false;
@@ -89,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         isAppRunning = true;
-        handler.postDelayed(appListRefreshRunner, 0);
+        appListRefreshRunner.run();
     }
 
     @Override
@@ -129,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
     // init all ui
     private void initUI() {
-        // init toolbar
+        // init data of about dialog
         StringBuilder message = new StringBuilder("内核墓碑支持状态：\n");
         if(FreezerUtils.doesSupportFreezerV2Frozen())
             message.append("✔️已挂载 FreezerV2(FROZEN)");
@@ -152,9 +151,9 @@ public class MainActivity extends AppCompatActivity {
         ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.BLUE);
         realMessage.setSpan(foregroundColorSpan, preMessage.length(), realMessage.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
+        // init toolbar and about dialog
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.main);
-
         toolbar.setOnMenuItemClickListener(item -> {
             AlertDialog dialog = new AlertDialog.Builder(this)
                     .setTitle(R.string.about_dialog_title)
@@ -163,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {}
                     }).show();
-
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(UiUtils.isNightMode() ? Color.WHITE : Color.BLACK);
             TextView dialogMessage = (TextView)dialog.findViewById(android.R.id.message);
             dialogMessage.setMovementMethod(LinkMovementMethod.getInstance());
@@ -187,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // init app list
-        appListItemAdapter = new AppListItemAdapter(this, appItemList);
+        appListItemAdapter = new AppListItemAdapter(this, new ArrayList<ProcessAndAppInfo>());
         RecyclerView rv = findViewById(R.id.appList);
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(appListItemAdapter);
@@ -210,38 +208,7 @@ public class MainActivity extends AppCompatActivity {
                     .append(newAppItemList.size()).append("个被冻结进程").toString());
 
             // Calc diff and update recycleview
-            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
-                @Override
-                public int getOldListSize() {
-                    return appItemList.size();
-                }
-
-                @Override
-                public int getNewListSize() {
-                    return newAppItemList.size();
-                }
-
-                @Override
-                public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                    // 判断两项是否是同一项
-                    return appItemList.get(oldItemPosition).getProcessName().equals(newAppItemList.get(newItemPosition).getProcessName());
-                }
-
-                @Override
-                public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-                    // 判断两项的内容是否相同
-                    ProcessAndAppInfo oldItem = appItemList.get(oldItemPosition);
-                    ProcessAndAppInfo newItem = newAppItemList.get(newItemPosition);
-                    return oldItem.getStatus().equals(newItem.getStatus())
-                            && oldItem.getFrozenType().equals(newItem.getFrozenType());
-                }
-            });
-
-            synchronized(appItemList) {
-                appItemList.clear();
-                appItemList.addAll(newAppItemList);
-            }
-            diffResult.dispatchUpdatesTo(appListItemAdapter);
+            appListItemAdapter.updateData(newAppItemList);
         }
         catch(Throwable t)
         {

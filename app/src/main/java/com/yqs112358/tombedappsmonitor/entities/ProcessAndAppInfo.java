@@ -18,14 +18,14 @@ public class ProcessAndAppInfo {
         Unknown, Sleeping, Running, DiskSleep, Idle, Stopped, Tracked, Zombie, Died
     }
 
-    String processName;
-    String user;
+    String processName = "";
+    String user = "";
 
-    Boolean isApp;
-    String packageName;
-    String appName;
-    Drawable appIcon;
+    Boolean isApp = false;
+    String packageName = "";
+    String appName = "";
+    Drawable appIcon = null;
 
-    Status status;
-    FrozenType frozenType;
+    Status status = Status.Unknown;
+    FrozenType frozenType = FrozenType.None;
 }
