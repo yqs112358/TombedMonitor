@@ -36,7 +36,7 @@ android {
         variant ->
             variant.outputs.all {
                 //这里修改apk文件名
-                outputFileName = "TombedMonitor-${variant.versionName}(${versionCode}).apk"
+                outputFileName = "TombedMonitor-${variant.versionName}.apk"
             }
     }
 }

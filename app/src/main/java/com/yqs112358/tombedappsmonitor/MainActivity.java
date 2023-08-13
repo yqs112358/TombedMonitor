@@ -241,7 +241,6 @@ public class MainActivity extends AppCompatActivity {
                 appItemList.clear();
                 appItemList.addAll(newAppItemList);
             }
-
             diffResult.dispatchUpdatesTo(appListItemAdapter);
         }
         catch(Throwable t)

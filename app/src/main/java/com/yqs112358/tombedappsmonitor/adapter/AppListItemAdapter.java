@@ -6,6 +6,7 @@ import static com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo.FrozenT
 import static com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo.FrozenType.SIGSTOP;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +60,10 @@ public class AppListItemAdapter extends RecyclerView.Adapter<AppListItemAdapter.
         ProcessAndAppInfo appInfo;
         synchronized(dataList) {
             appInfo = dataList.get(position);
+        }
+        if(appInfo == null) {
+            Log.e("TombedMonitor", "Null data item??");
+            return;
         }
 
         // set icon
