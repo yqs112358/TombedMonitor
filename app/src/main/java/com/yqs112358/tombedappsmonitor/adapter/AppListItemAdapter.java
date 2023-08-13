@@ -56,7 +56,10 @@ public class AppListItemAdapter extends RecyclerView.Adapter<AppListItemAdapter.
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         // 更新控件数据
-        ProcessAndAppInfo appInfo = dataList.get(position);
+        ProcessAndAppInfo appInfo;
+        synchronized(dataList) {
+            appInfo = dataList.get(position);
+        }
 
         // set icon
         holder.appIcon.setImageDrawable(appInfo.getAppIcon());

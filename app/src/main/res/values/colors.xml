@@ -10,6 +10,7 @@
     <color name="black_900">#FF121212</color>
     <color name="black_100">#FFF5F5F5</color>
     <color name="white_100">#FF1F1F1F</color>
-    <color name="gray">#c1c1c2</color>
-    <color name="deeper_gray">#9e9e9e</color>
+    <color name="light_gray">#C1C1C2</color>
+    <color name="gray">#9E9E9E</color>
+    <color name="deep_gray">#1C1C1C</color>
 </resources>

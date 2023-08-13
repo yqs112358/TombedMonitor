@@ -2,6 +2,7 @@ package com.yqs112358.tombedappsmonitor;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +33,7 @@ import com.yqs112358.tombedappsmonitor.utils.FreezerUtils;
 import com.yqs112358.tombedappsmonitor.utils.ProcessUtils;
 import com.yqs112358.tombedappsmonitor.utils.RootUtils;
 import com.yqs112358.tombedappsmonitor.utils.SystemPropUtils;
+import com.yqs112358.tombedappsmonitor.utils.UiUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,8 +123,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }).create();
         dialog.show();
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
-        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(Color.BLACK);
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(UiUtils.isNightMode() ? Color.WHITE : Color.BLACK);
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(UiUtils.isNightMode() ? Color.WHITE : Color.BLACK);
     }
 
     // init all ui
@@ -162,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {}
                     }).show();
 
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(UiUtils.isNightMode() ? Color.WHITE : Color.BLACK);
             TextView dialogMessage = (TextView)dialog.findViewById(android.R.id.message);
             dialogMessage.setMovementMethod(LinkMovementMethod.getInstance());
             return true;
@@ -235,8 +237,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            appItemList.clear();
-            appItemList.addAll(newAppItemList);
+            synchronized(appItemList) {
+                appItemList.clear();
+                appItemList.addAll(newAppItemList);
+            }
 
             diffResult.dispatchUpdatesTo(appListItemAdapter);
         }

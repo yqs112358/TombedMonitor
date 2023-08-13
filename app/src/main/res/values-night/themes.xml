@@ -2,13 +2,13 @@
     <!-- Base application theme. -->
     <style name="MainTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/white</item>
-        <item name="colorPrimaryVariant">@color/black_100</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimary">@color/deep_gray</item>
+        <item name="colorPrimaryVariant">@color/deep_gray</item>
+        <item name="colorOnPrimary">@color/deep_gray</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/black</item>
-        <item name="colorSecondaryVariant">@color/black</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorSecondary">@color/white</item>
+        <item name="colorSecondaryVariant">@color/black_100</item>
+        <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimary</item>
         <item name="android:windowLightStatusBar">true</item>
