@@ -1,6 +1,9 @@
 package com.yqs112358.tombedappsmonitor.utils;
 
+import android.graphics.drawable.Drawable;
+
 import com.topjohnwu.superuser.Shell;
+import com.yqs112358.tombedappsmonitor.R;
 import com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo;
 
 import java.util.ArrayList;
@@ -42,10 +45,12 @@ public class ProcessUtils {
         put("get_signal", ProcessAndAppInfo.FrozenType.MaybeV2);
     }};
 
+    // default process icon
+    private static Drawable defaultProcessIcon = null;
 
-    // Map<processName, info>
+
     public static List<ProcessAndAppInfo> getAllProcessesInfo() throws Throwable {
-        // Execute commands synchronously
+        // execute commands synchronously
         Shell.Result result = Shell.cmd(queryCommand).exec();
         if (!result.isSuccess())
             return new ArrayList<ProcessAndAppInfo>();
@@ -62,6 +67,11 @@ public class ProcessUtils {
             // process names
             ProcessAndAppInfo res = new ProcessAndAppInfo();
             res.setProcessName(processName);
+
+            // app info
+            if(defaultProcessIcon == null)
+                defaultProcessIcon = ApplicationUtils.getContext().getResources().getDrawable(R.drawable.linux, null);
+            res.setAppIcon(defaultProcessIcon);
             if(!processName.contains("[") && !processName.contains("]"))
             {
                 // maybe app
@@ -78,8 +88,8 @@ public class ProcessUtils {
 
             // process other data
             res.setUser(datas[0]);
-            String basicStaticChar = datas[7].substring(0,1);
-            res.setStatus(processStatusMap.getOrDefault(basicStaticChar, ProcessAndAppInfo.Status.Unknown));
+            String basicStatusChar = datas[7].substring(0,1);
+            res.setStatus(processStatusMap.getOrDefault(basicStatusChar, ProcessAndAppInfo.Status.Unknown));
             res.setFrozenType(processFrozenTypeMap.getOrDefault(datas[5], ProcessAndAppInfo.FrozenType.None));
 
             resList.add(res);
