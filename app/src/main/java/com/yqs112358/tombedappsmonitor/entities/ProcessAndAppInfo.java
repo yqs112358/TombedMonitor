@@ -18,6 +18,7 @@ public class ProcessAndAppInfo {
         Unknown, Sleeping, Running, DiskSleep, Idle, Stopped, Tracked, Zombie, Died
     }
 
+    Integer pid;
     String processName = "";
     String user = "";
 

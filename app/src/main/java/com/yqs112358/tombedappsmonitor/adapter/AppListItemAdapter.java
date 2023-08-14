@@ -123,8 +123,8 @@ public class AppListItemAdapter extends RecyclerView.Adapter<AppListItemAdapter.
             @Override
             public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
                 // 判断两项是否是同一项
-                return dataList.get(oldItemPosition).getProcessName().equals(
-                        newDataList.get(newItemPosition).getProcessName());
+                return dataList.get(oldItemPosition).getPid().equals(
+                        newDataList.get(newItemPosition).getPid());
             }
 
             @Override
@@ -132,7 +132,8 @@ public class AppListItemAdapter extends RecyclerView.Adapter<AppListItemAdapter.
                 // 判断两项的内容是否相同
                 ProcessAndAppInfo oldItem = dataList.get(oldItemPosition);
                 ProcessAndAppInfo newItem = newDataList.get(newItemPosition);
-                return oldItem.getStatus().equals(newItem.getStatus())
+                return oldItem.getProcessName().equals(newItem.getProcessName())
+                        && oldItem.getStatus().equals(newItem.getStatus())
                         && oldItem.getFrozenType().equals(newItem.getFrozenType());
             }
         });

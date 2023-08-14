@@ -58,41 +58,45 @@ public class ProcessUtils {
         List<ProcessAndAppInfo> resList = new ArrayList<ProcessAndAppInfo>();
         List<String> out = result.getOut();  // stdout
         for (String line : out) {
-            String[] datas = line.split("\\s+");
+            try {
+                String[] datas = line.split("\\s+");
 
-            String processName = datas[8];
-            if(ignoreProcessesList.contains(processName))
-                continue;           // skip this line
+                String processName = datas[8];
+                if (ignoreProcessesList.contains(processName))
+                    continue;           // skip this line
 
-            // process names
-            ProcessAndAppInfo res = new ProcessAndAppInfo();
-            res.setProcessName(processName);
+                // fill basic data
+                ProcessAndAppInfo res = new ProcessAndAppInfo();
+                res.setPid(Integer.valueOf(datas[1]));
+                res.setProcessName(processName);
 
-            // app info
-            if(defaultProcessIcon == null)
-                defaultProcessIcon = ApplicationUtils.getContext().getResources().getDrawable(R.drawable.linux, null);
-            res.setAppIcon(defaultProcessIcon);
-            if(!processName.contains("[") && !processName.contains("]"))
-            {
-                // maybe app
-                String packageName = processName.split(":")[0];
-                if(AppPackageUtils.isPackageName(packageName))
-                {
-                    // actually app
-                    res.setIsApp(true);
-                    res.setPackageName(packageName);
-                    res.setAppName(AppPackageUtils.getPackageAppName(packageName));
-                    res.setAppIcon(AppPackageUtils.getPackageAppIcon(packageName));
+                // fill app info
+                if (defaultProcessIcon == null)
+                    defaultProcessIcon = ApplicationUtils.getContext().getResources().getDrawable(R.drawable.linux, null);
+                res.setAppIcon(defaultProcessIcon);
+                if (!processName.contains("[") && !processName.contains("]")) {
+                    // maybe app
+                    String packageName = processName.split(":")[0];
+                    if (AppPackageUtils.isPackageName(packageName)) {
+                        // actually app
+                        res.setIsApp(true);
+                        res.setPackageName(packageName);
+                        res.setAppName(AppPackageUtils.getPackageAppName(packageName));
+                        res.setAppIcon(AppPackageUtils.getPackageAppIcon(packageName));
+                    }
                 }
+
+                // fill other data
+                res.setUser(datas[0]);
+                String basicStatusChar = datas[7].substring(0, 1);
+                res.setStatus(processStatusMap.getOrDefault(basicStatusChar, ProcessAndAppInfo.Status.Unknown));
+                res.setFrozenType(processFrozenTypeMap.getOrDefault(datas[5], ProcessAndAppInfo.FrozenType.None));
+
+                resList.add(res);
             }
-
-            // process other data
-            res.setUser(datas[0]);
-            String basicStatusChar = datas[7].substring(0,1);
-            res.setStatus(processStatusMap.getOrDefault(basicStatusChar, ProcessAndAppInfo.Status.Unknown));
-            res.setFrozenType(processFrozenTypeMap.getOrDefault(datas[5], ProcessAndAppInfo.FrozenType.None));
-
-            resList.add(res);
+            catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
         return resList;
     }
