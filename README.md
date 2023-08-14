@@ -38,8 +38,6 @@
 
 ## 致谢
 
-感谢 冻它 作者JARK006，基本是按他的脚本套了个UI可视化（乐
+感谢 冻它 作者JARK006，基本是按他的脚本套了个UI可视化（乐）。欢迎大家去酷安尝试 冻它 墓碑模块
 
-欢迎大家去酷安尝试 冻它 墓碑模块
-
-UI设计部分参考myflavor大佬的[NoActive-UI](https://github.com/myflavor/NoActive-UI)，强大的开源社区墓碑模块
+UI设计部分参考myflavor大佬的[NoActive-UI](https://github.com/myflavor/NoActive-UI)，强大好用的开源墓碑模块，同样欢迎大家的尝试和体验。
