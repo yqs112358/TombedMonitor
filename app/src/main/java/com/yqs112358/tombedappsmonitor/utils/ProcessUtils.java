@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ProcessUtils {
 
@@ -49,7 +48,7 @@ public class ProcessUtils {
     private static Drawable defaultProcessIcon = null;
 
 
-    public static List<ProcessAndAppInfo> getAllProcessesInfo() throws Throwable {
+    public static List<ProcessAndAppInfo> getAllFrozenProcesses() throws Throwable {
         // execute commands synchronously
         Shell.Result result = Shell.cmd(queryCommand).exec();
         if (!result.isSuccess())

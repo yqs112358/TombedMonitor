@@ -2,14 +2,11 @@ package com.yqs112358.tombedappsmonitor;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,8 +20,6 @@ import android.text.util.Linkify;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.topjohnwu.superuser.Shell;
 
 import com.yqs112358.tombedappsmonitor.adapter.AppListItemAdapter;
 import com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo;
@@ -140,9 +135,10 @@ public class MainActivity extends AppCompatActivity {
             message.append("❓不支持Freezer，仅可用Signal-19/20方式");
 
         message.append("\n\n安卓版本：").append(SystemPropUtils.getAndroidVersion())
-                .append("(API ").append(SystemPropUtils.getAndroidApiVersion())
+                .append(" (API ").append(SystemPropUtils.getAndroidApiVersion())
                 .append(")\n内核版本：").append(SystemPropUtils.getLinuxCoreVersion())
-                .append("\n\n项目开源地址：");
+                .append("\n\nApp版本：v").append(BuildConfig.VERSION_NAME)
+                .append("\n开源地址：");
 
         // add color and link to message
         String preMessage = message.toString();
@@ -194,11 +190,13 @@ public class MainActivity extends AppCompatActivity {
     // refresh app list
     public void refreshAppList() {
         try {
-            List<ProcessAndAppInfo> newAppItemList = ProcessUtils.getAllProcessesInfo();
+            List<ProcessAndAppInfo> newAppItemList = ProcessUtils.getAllFrozenProcesses();
             if(!searchFilter.isEmpty())
             {
                 // Filter list
                 newAppItemList.removeIf(item->{
+                    if(!item.getIsApp())
+                        return true;            // temporarily remove all not-app entries
                    return !item.getAppName().contains(searchFilter) && !item.getProcessName().contains(searchFilter);
                 });
             }
