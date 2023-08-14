@@ -2,7 +2,6 @@ package com.yqs112358.tombedappsmonitor.adapter;
 
 import static com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo.FrozenType.FreezerV1;
 import static com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo.FrozenType.FreezerV2;
-import static com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo.FrozenType.MaybeV2;
 import static com.yqs112358.tombedappsmonitor.entities.ProcessAndAppInfo.FrozenType.SIGSTOP;
 
 import android.content.Context;
@@ -90,9 +89,6 @@ public class AppListItemAdapter extends RecyclerView.Adapter<AppListItemAdapter.
                 break;
             case SIGSTOP:
                 holder.appStatus.setText(R.string.freeze_status_SIGSTOP);
-                break;
-            case MaybeV2:
-                holder.appStatus.setText(R.string.freeze_status_maybeV2);
                 break;
             default:
                 holder.appStatus.setText(R.string.freeze_status_unknown);

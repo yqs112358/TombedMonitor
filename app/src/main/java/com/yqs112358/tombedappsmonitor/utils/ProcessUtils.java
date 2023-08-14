@@ -41,7 +41,7 @@ public class ProcessUtils {
         put("__refrigerator", ProcessAndAppInfo.FrozenType.FreezerV1);
         put("do_freezer_trap", ProcessAndAppInfo.FrozenType.FreezerV2);
         put("do_signal_stop", ProcessAndAppInfo.FrozenType.SIGSTOP);
-        put("get_signal", ProcessAndAppInfo.FrozenType.MaybeV2);
+        put("get_signal", ProcessAndAppInfo.FrozenType.FreezerV2);      // do_freezer_trap inline optimized
     }};
 
     // default process icon

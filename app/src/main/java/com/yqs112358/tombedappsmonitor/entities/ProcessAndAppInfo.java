@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class ProcessAndAppInfo {
 
     public enum FrozenType {
-        None, FreezerV1, FreezerV2, SIGSTOP, MaybeV2
+        None, FreezerV1, FreezerV2, SIGSTOP
     }
     public enum Status {
         Unknown, Sleeping, Running, DiskSleep, Idle, Stopped, Tracked, Zombie, Died
