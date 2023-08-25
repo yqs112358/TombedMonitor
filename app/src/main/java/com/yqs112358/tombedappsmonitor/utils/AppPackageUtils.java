@@ -48,5 +48,7 @@ public class AppPackageUtils {
                 .getApplicationIcon(getPackageInfo(packageName).applicationInfo);
     }
 
-    public static boolean isPackageName(String name) { return allPackageNames.contains(name); }
+    public static boolean isPackageName(String name) {
+        return !name.isEmpty() && allPackageNames.contains(name);
+    }
 }

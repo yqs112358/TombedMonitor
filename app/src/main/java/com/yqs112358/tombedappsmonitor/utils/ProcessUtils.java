@@ -18,7 +18,7 @@ public class ProcessUtils {
             = "ps -A | grep -E 'refrigerator|do_freezer|signal'";
 
     // process name ignore list
-    private static final List<String> ignoreProcessesList = Arrays.asList("sh", "su");
+    private static final List<String> ignoreProcessesList = Arrays.asList("sh", "su", "ps", "ls", "grep", "bash", "logcat");
 
     // process status map
     private static final HashMap<String, ProcessAndAppInfo.Status> processStatusMap
